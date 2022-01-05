@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <algorithm>
 #include <cmath>
 #include <iostream>
@@ -70,6 +71,34 @@ double ipart(double x)
 double dpart(double x)
 {
     return x - ipart(x);
+}
+
+// tronc un nombre d digits après le virgule
+// propriété
+double truncinf(double x, int d)
+{
+    double p = pow(2, d);
+    double y = floor(x * p) / p;
+    assert(y <= x);
+    return y;
+}
+
+double truncsup(double x, int d)
+{
+    double p = pow(2, d);
+    double y = floor(x * p + 1) / p;
+    assert(x <= y);
+    return y;
+}
+
+void testtrunc(double x, int d)
+{
+    double l = truncinf(x, d);
+    double h = truncsup(x, d);
+    std::cout << l << "<=" << x << "<=" << h << " truncature " << d << " digits après la virgule" << std::endl;
+    std::cout << "l: " << decimalToBinary(l, d) << std::endl;
+    std::cout << "x: " << decimalToBinary(x, 64) << std::endl;
+    std::cout << "h: " << decimalToBinary(h, d) << std::endl;
 }
 
 void d2binstr(double f, std::string& str)
@@ -154,6 +183,12 @@ int main()
     test(3.14159, M_PI);
     test(1.0 / 2.0 + 1.0 / 4.0, 1.0 / 2.0 + 1.0 / 4.0 + 1.0 / 8.0);
     test(0.101, 0.102);
+
+    testtrunc(0.1, 4);
+    testtrunc(M_PI, 1);
+    testtrunc(M_PI, 2);
+    testtrunc(M_PI, 16);
+
     return 0;
 }
 
