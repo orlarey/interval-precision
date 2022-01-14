@@ -3,7 +3,7 @@ ANALYSIS="-*,cert-*,clang-analyzer-*,modernize-*,performance-*,cppcoreguidelines
 SRC=$(wildcard *.cpp)
 HDR=$(wildcard *.hh)
 
-a.out : ${SRC} ${HDR}
+a.out : ${SRC} ${HDR} Makefile
 	${CXX} -Wall -Wextra -Wshadow -O1 -g --std=c++17 -I . ${SRC} -o a.out
 
 

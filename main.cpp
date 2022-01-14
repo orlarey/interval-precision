@@ -162,11 +162,6 @@ void test(double x, double y)
     // inspect(y);
 }
 
-// C++ program to convert fractional decimal
-// to binary number
-#include <bits/stdc++.h>
-using namespace std;
-
 int main()
 {
     std::cout << "Test difference" << std::endl;
