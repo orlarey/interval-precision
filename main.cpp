@@ -11,6 +11,11 @@
 #include <variant>
 #include <vector>
 
+#include <boost/numeric/interval.hpp>
+using namespace boost::numeric;
+using namespace interval_lib;
+typedef interval<double> I;
+
 // http://www.binaryconvert.com/result_double.html?decimal=049
 
 // Function to convert decimal to binary upto
@@ -162,6 +167,14 @@ void test(double x, double y)
     // inspect(y);
 }
 
+template <typename N>
+inline std::ostream& operator<<(std::ostream& file, interval<N> i)
+{
+    return file << '[' << i.lower() << ',' << i.upper() << ']';
+}
+
+#define INSPECT(expr) std::cout << #expr << ": " << (expr) << "\n";
+
 int main()
 {
     std::cout << "Test difference" << std::endl;
@@ -183,6 +196,14 @@ int main()
     testtrunc(M_PI, 1);
     testtrunc(M_PI, 2);
     testtrunc(M_PI, 16);
+
+    I x(-1, +1);
+    INSPECT(x);
+    INSPECT(square(x));
+    INSPECT(x * x);
+    I y = square(x);  // x ^ 2.0;
+    // std::cout << "interval: " << y.lower() << "," << y.upper() << std::endl;
+    std::cout << "interval: " << square(x) << std::endl;
 
     return 0;
 }
