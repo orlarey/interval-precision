@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <algorithm>
 #include <cmath>
+#include <functional>
 #include <iostream>
 #include <list>
 #include <map>
@@ -15,7 +16,13 @@
 #include <boost/numeric/interval.hpp>
 using namespace boost::numeric;
 using namespace interval_lib;
-typedef interval<double> I;
+
+typedef interval<double, policies<save_state<rounded_transc_std<double>>, checking_base<double>>> I;
+
+inline std::ostream& operator<<(std::ostream& file, I i)
+{
+    return file << '[' << i.lower() << ';' << i.upper() << ']';
+}
 
 // http://www.binaryconvert.com/result_double.html?decimal=049
 
@@ -177,12 +184,6 @@ void test(double x, double y)
     // inspect(y);
 }
 
-template <typename N>
-inline std::ostream& operator<<(std::ostream& file, interval<N> i)
-{
-    return file << '[' << i.lower() << ',' << i.upper() << ']';
-}
-
 #define INSPECT(expr) std::cout << #expr << ": " << (expr) << "\n";
 
 // l: least significant bit
@@ -225,49 +226,132 @@ void job(I i, int l, double c)
     std::cout << "Optimal lsb: " << ropt << std::endl;
 }
 
+// l: least significant bit
+// c: coverage
+void jobf(const std::function<I(I)>& fun, I i, int l, double c, bool hist)
+{
+    I      j     = truncInterval(i, l);
+    double delta = pow(2, l);
+
+    std::cout << "\nJobf -- Interval " << i << " lsb: " << l << " truncated interval: " << j
+              << " number of points: " << (j.upper() - j.lower()) / delta << " coverage: " << c << std::endl;
+
+    std::map<int, int> R;
+
+    int cases = 0;
+    for (double x = j.lower(); x < j.upper(); x += delta) {
+        cases++;
+        I   z(x, x + delta);
+        I   w  = fun(z);
+        int lr = lcb(w);
+        R[lr]++;
+    }
+
+    if (hist) std::cout << "Histogram " << i << ", " << j << ", lsb " << l << ", coverage: " << c << std::endl;
+    int sum  = 0;
+    int ropt = 0;
+    for (auto r : R) {
+        double w = double(cases - sum) / cases;
+        if (w >= c) {
+            ropt = r.first;
+        }
+        if (hist) std::cout << r.first << ':' << r.second << " RATIO= " << w << std::endl;
+        sum += r.second;
+    }
+    std::cout << "Number of cases: " << cases << " Optimal output lsb: " << ropt << std::endl;
+}
+
 int main()
 {
-    std::cout << "Tests A" << std::endl;
+    /*    std::cout << "Tests A" << std::endl;
 
-    inspect(4);
-    inspect(M_PI);
-    inspect(2);
-    inspect(1);
-    inspect(0.5);
-    inspect(0.25);
+        inspect(4);
+        inspect(M_PI);
+        inspect(2);
+        inspect(1);
+        inspect(0.5);
+        inspect(0.25);
 
-    std::cout << "Tests B" << std::endl;
+        std::cout << "Tests B" << std::endl;
 
-    test(3.14, 4.14);
-    test(3.14, 3.14);
-    test(3.14159, M_PI);
-    test(1.0 / 2.0 + 1.0 / 4.0, 1.0 / 2.0 + 1.0 / 4.0 + 1.0 / 8.0);
-    test(0.101, 0.102);
+        test(3.14, 4.14);
+        test(3.14, 3.14);
+        test(3.14159, M_PI);
+        test(1.0 / 2.0 + 1.0 / 4.0, 1.0 / 2.0 + 1.0 / 4.0 + 1.0 / 8.0);
+        test(0.101, 0.102);
 
-    std::cout << "Tests C" << std::endl;
+        std::cout << "Tests C" << std::endl;
 
-    testtrunc(0.1, -4);
-    testtrunc(M_PI, -1);
-    testtrunc(M_PI, -2);
-    testtrunc(M_PI, -16);
+        testtrunc(0.1, -4);
+        testtrunc(M_PI, -1);
+        testtrunc(M_PI, -2);
+        testtrunc(M_PI, -16);
 
-    I x(-1, +1);
-    INSPECT(x);
-    INSPECT(square(x));
-    INSPECT(x * x);
-    I z(-M_PI, M_PI);
-    INSPECT(z);
-    INSPECT(truncInterval(z, -2));
-    INSPECT(truncInterval(z, -3));
-    INSPECT(truncInterval(z, -4));
-
+        I x(-1, +1);
+        INSPECT(x);
+        INSPECT(square(x));
+        INSPECT(x * x);
+        I z(-M_PI, M_PI);
+        INSPECT(z);
+        INSPECT(truncInterval(z, -2));
+        INSPECT(truncInterval(z, -3));
+        INSPECT(truncInterval(z, -4));
+    */
     // std::cout << "interval: " << y.lower() << "," << y.upper() << std::endl;
-    std::cout << "interval: " << square(x) << std::endl;
+    // std::cout << "interval: " << square(x) << std::endl;
     std::cout << "JOB" << std::endl;
     I w(0, M_PI / 2);
-    job(w, -4, 0.99);
-    job(w, -8, 0.99);
-    job(w, -16, 0.99);
+    jobf([](I i) { return i / 4.0; }, w, -16, 0.99, true);
+    jobf([](I i) { return i * 4.0; }, w, -16, 0.99, true);
+    jobf([](I i) { return sin(i); }, w, -16, 0.99, true);
+    //
+    {
+        std::cout << "\nSearch for [](I i) { return square(sin(i)); }" << std::endl;
+        auto foo = [](I i) { return square(sin(i)); };
+        jobf(foo, I(0.1, M_PI), -16, 0.99, false);
+        jobf(foo, I(0.1, M_PI), -15, 0.99, false);
+        jobf(foo, I(0.1, M_PI), -14, 0.99, false);
+        jobf(foo, I(0.1, M_PI), -13, 0.99, false);
+        jobf(foo, I(0.1, M_PI), -12, 0.99, false);
+        jobf(foo, I(0.1, M_PI), -11, 0.99, false);
+        jobf(foo, I(0.1, M_PI), -10, 0.99, false);
+    }
+    //
+    {
+        std::cout << "\nSearch for [](I i) { return 1.0/sin(i); }" << std::endl;
+        auto foo = [](I i) { return 1.0 / sin(i); };
+        jobf(foo, I(0.1, M_PI), -16, 0.99, false);
+        jobf(foo, I(0.1, M_PI), -15, 0.99, false);
+        jobf(foo, I(0.1, M_PI), -14, 0.99, false);
+        jobf(foo, I(0.1, M_PI), -13, 0.99, false);
+        jobf(foo, I(0.1, M_PI), -12, 0.99, false);
+        jobf(foo, I(0.1, M_PI), -11, 0.99, false);
+        jobf(foo, I(0.1, M_PI), -10, 0.99, false);
+    }
+    //
+    {
+        std::cout << "\n> Search for [](I i) { return arctan(i*10.0); }" << std::endl;
+        auto foo = [](I i) { return atan(i * 10.0); };
+        jobf(foo, I(-1, 1), -16, 0.99, false);
+        jobf(foo, I(-1, 1), -15, 0.99, false);
+        jobf(foo, I(-1, 1), -14, 0.99, false);
+        jobf(foo, I(-1, 1), -13, 0.99, false);
+        jobf(foo, I(-1, 1), -12, 0.99, false);
+        jobf(foo, I(-1, 1), -11, 0.99, false);
+        jobf(foo, I(-1, 1), -10, 0.99, false);
+    }
+    //
+    {
+        std::cout << "\n> Search for [](I i) { return i-pow(i,3.0); }" << std::endl;
+        auto foo = [](I i) { return i - pow(i, 3.0); };
+        jobf(foo, I(-1, 1), -16, 0.99, false);
+        jobf(foo, I(-1, 1), -15, 0.99, false);
+        jobf(foo, I(-1, 1), -14, 0.99, false);
+        jobf(foo, I(-1, 1), -13, 0.99, false);
+        jobf(foo, I(-1, 1), -12, 0.99, false);
+        jobf(foo, I(-1, 1), -11, 0.99, false);
+        jobf(foo, I(-1, 1), -10, 0.99, false);
+    }
     return 0;
 }
 
