@@ -3,6 +3,7 @@
 #include <cmath>
 #include <iostream>
 #include <list>
+#include <map>
 #include <memory>
 #include <sstream>
 #include <string>
@@ -78,37 +79,36 @@ double dpart(double x)
     return x - ipart(x);
 }
 
-// tronc un nombre d digits après le virgule
-// propriété
-double truncinf(double x, int d)
+// tronc un nombre après le bit 2^l
+double truncinf(double x, int l)
 {
-    double p = pow(2, d);
-    double y = floor(x * p) / p;
+    double p = pow(2, l);
+    double y = floor(x / p) * p;
     assert(y <= x);
     return y;
 }
 
-double truncsup(double x, int d)
+double truncsup(double x, int l)
 {
-    double p = pow(2, d);
-    double y = floor(x * p + 1) / p;
+    double p = pow(2, l);
+    double y = floor(x / p + 1) * p;
     assert(x <= y);
     return y;
 }
 
-I truncInterval(I i, int d)
+I truncInterval(I i, int l)
 {
-    return I(truncinf(i.lower(), d), truncsup(i.upper(), d));
+    return I(truncinf(i.lower(), l), truncsup(i.upper(), l));
 }
 
 void testtrunc(double x, int d)
 {
     double l = truncinf(x, d);
     double h = truncsup(x, d);
-    std::cout << l << "<=" << x << "<=" << h << " truncature " << d << " digits après la virgule" << std::endl;
-    std::cout << "l: " << decimalToBinary(l, d) << std::endl;
+    std::cout << l << "<=" << x << "<=" << h << " truncature après le bit " << d << std::endl;
+    std::cout << "l: " << decimalToBinary(l, -d) << std::endl;
     std::cout << "x: " << decimalToBinary(x, 64) << std::endl;
-    std::cout << "h: " << decimalToBinary(h, d) << std::endl;
+    std::cout << "h: " << decimalToBinary(h, -d) << std::endl;
 }
 
 void d2binstr(double f, std::string& str)
@@ -163,6 +163,11 @@ int lcb(double x, double y)
     return dn;
 }
 
+int lcb(I i)
+{
+    return lcb(i.lower(), i.upper());
+}
+
 void test(double x, double y)
 {
     std::cout << "difference betwwen " << x << " and " << y << " at binary position " << lcb(x, y) << std::endl;
@@ -180,9 +185,49 @@ inline std::ostream& operator<<(std::ostream& file, interval<N> i)
 
 #define INSPECT(expr) std::cout << #expr << ": " << (expr) << "\n";
 
+// l: least significant bit
+// c: coverage
+void job(I i, int l, double c)
+{
+    std::cout << "\nJob " << std::endl;
+
+    I                  j = truncInterval(i, l);
+    std::map<int, int> R;
+    INSPECT(i);
+    INSPECT(j);
+    double delta = pow(2, l);
+
+    int cases = 0;
+    for (double x = j.lower(); x < j.upper(); x += delta) {
+        cases++;
+        // std::cout << "...." << std::endl;
+        I z(x, x + delta);
+        // INSPECT(z);
+        // I w = square(z);
+        I w = z / 4.0;
+        // INSPECT(square(z));
+        int lr = lcb(w);
+        // INSPECT(lcb(square(z)));
+        R[lr]++;
+    }
+
+    std::cout << "Histogram " << i << ", " << j << ", lsb " << l << ", coverage: " << c << std::endl;
+    int sum  = 0;
+    int ropt = 0;
+    for (auto r : R) {
+        double w = double(cases - sum) / cases;
+        if (w >= c) {
+            ropt = r.first;
+        }
+        std::cout << r.first << ':' << r.second << " RATIO= " << w << std::endl;
+        sum += r.second;
+    }
+    std::cout << "Optimal lsb: " << ropt << std::endl;
+}
+
 int main()
 {
-    std::cout << "Test difference" << std::endl;
+    std::cout << "Tests A" << std::endl;
 
     inspect(4);
     inspect(M_PI);
@@ -191,31 +236,38 @@ int main()
     inspect(0.5);
     inspect(0.25);
 
+    std::cout << "Tests B" << std::endl;
+
     test(3.14, 4.14);
     test(3.14, 3.14);
     test(3.14159, M_PI);
     test(1.0 / 2.0 + 1.0 / 4.0, 1.0 / 2.0 + 1.0 / 4.0 + 1.0 / 8.0);
     test(0.101, 0.102);
 
-    testtrunc(0.1, 4);
-    testtrunc(M_PI, 1);
-    testtrunc(M_PI, 2);
-    testtrunc(M_PI, 16);
+    std::cout << "Tests C" << std::endl;
+
+    testtrunc(0.1, -4);
+    testtrunc(M_PI, -1);
+    testtrunc(M_PI, -2);
+    testtrunc(M_PI, -16);
 
     I x(-1, +1);
     INSPECT(x);
     INSPECT(square(x));
     INSPECT(x * x);
-    I y = square(x);  // x ^ 2.0;
     I z(-M_PI, M_PI);
     INSPECT(z);
-    INSPECT(truncInterval(z, 2));
-    INSPECT(truncInterval(z, 3));
-    INSPECT(truncInterval(z, 4));
+    INSPECT(truncInterval(z, -2));
+    INSPECT(truncInterval(z, -3));
+    INSPECT(truncInterval(z, -4));
 
     // std::cout << "interval: " << y.lower() << "," << y.upper() << std::endl;
     std::cout << "interval: " << square(x) << std::endl;
-
+    std::cout << "JOB" << std::endl;
+    I w(0, M_PI / 2);
+    job(w, -4, 0.99);
+    job(w, -8, 0.99);
+    job(w, -16, 0.99);
     return 0;
 }
 

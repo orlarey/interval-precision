@@ -4,7 +4,9 @@ SRC=$(wildcard *.cpp)
 HDR=$(wildcard *.hh)
 
 a.out : ${SRC} ${HDR} Makefile
-	${CXX} -Wall -Wextra -Wshadow -O1 -g --std=c++2a -I . -I /opt/local/include -D__USE_ISOC99 ${SRC} -o a.out
+	${CXX} -Wall -Wextra -Wshadow -O1 -g --std=c++2a -I . -I /opt/local/include  ${SRC} -o a.out
+
+###	${CXX} -Wall -Wextra -Wshadow -O1 -g --std=c++2a -I . -I /opt/local/include -D__USE_ISOC99 ${SRC} -o a.out
 
 
 test: a.out
