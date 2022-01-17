@@ -96,6 +96,11 @@ double truncsup(double x, int d)
     return y;
 }
 
+I truncInterval(I i, int d)
+{
+    return I(truncinf(i.lower(), d), truncsup(i.upper(), d));
+}
+
 void testtrunc(double x, int d)
 {
     double l = truncinf(x, d);
@@ -202,6 +207,12 @@ int main()
     INSPECT(square(x));
     INSPECT(x * x);
     I y = square(x);  // x ^ 2.0;
+    I z(-M_PI, M_PI);
+    INSPECT(z);
+    INSPECT(truncInterval(z, 2));
+    INSPECT(truncInterval(z, 3));
+    INSPECT(truncInterval(z, 4));
+
     // std::cout << "interval: " << y.lower() << "," << y.upper() << std::endl;
     std::cout << "interval: " << square(x) << std::endl;
 
