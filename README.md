@@ -32,7 +32,7 @@ $$
 
 Pour un intervalle $[l,h[$ on peut calculer une *plus grande précision commune* à toutes les valeurs de l'intervalle $p\in\mathbb{Z}$ telle que :
 $$
-\mathrm{pgpc}([l,h[) = p\equiv\forall u,v \in [l,h[, (u_l=v_l) \and (u_{p+1}\neq v_{p+1})
+\mathrm{pgpc}([l,h[) = p\equiv\forall u,v \in [l,h[, (u_l=v_l) \& (u_{p+1}\neq v_{p+1})
 $$
 
 ## Découpage d'un intervalle
