@@ -1,5 +1,5 @@
-#include <assert.h>
 #include <algorithm>
+#include <cassert>
 #include <cmath>
 #include <functional>
 #include <iostream>
@@ -14,6 +14,7 @@
 #include <vector>
 
 #include <boost/numeric/interval.hpp>
+
 using namespace boost::numeric;
 using namespace interval_lib;
 
