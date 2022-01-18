@@ -1,3 +1,10 @@
+UNAME_S := $(shell uname -s)
+
+ifeq ($(UNAME_S),Darwin)
+	CXX=clang++-mp-13
+    EXT=-mp-13
+endif
+
 ANALYSIS="-*,cert-*,clang-analyzer-*,modernize-*,performance-*,cppcoreguidelines-*,google-*,bugprone-*,misc-*,-google-runtime-references,-cppcoreguidelines-avoid-magic-numbers,-modernize-use-trailing-return-type,-misc-redundant-expression"
 
 SRC=$(wildcard *.cpp)
@@ -19,14 +26,14 @@ help:
 	@echo "make clean          : delete all generated files"
 
 format :
-	clang-format -i -style=file *.cpp *.hh
+	clang-format${EXT} -i -style=file ${SRC} ${HDR}
 
 clean :
 	rm -f a.out *.orig *.plist
 
 analyze :
-	clang-tidy --extra-arg="--std=c++17" -checks=${ANALYSIS} -header-filter=.* *.cpp  -- -I .
+	clang-tidy${EXT} --extra-arg="--std=c++17" -checks=${ANALYSIS}  *.cpp  -- -I . -I /opt/local/include -D__USE_ISOC99
 
 fix :
-	clang-tidy --extra-arg="--std=c++17" -checks=${ANALYSIS} -header-filter=.* *.cpp -fix  -- -I .
+	clang-tidy${EXT} --extra-arg="--std=c++17" -checks=${ANALYSIS}  *.cpp -fix  -- -I . -I /opt/local/include -D__USE_ISOC99
 
