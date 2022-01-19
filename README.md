@@ -1,5 +1,15 @@
 [![example workflow](https://github.com/orlarey/interval-precision/actions/workflows/c-cpp.yml/badge.svg)](https://github.com/orlarey/interval-precision/actions/workflows/c-cpp.yml)
 
+
+# Example
+Analyze the function `[](I i) { return square(sin(i)); }` in the interval `I(0.1, M_PI)` with a lsb precision of `-18`:
+	    
+	auto        fun = [](I i) { return square(sin(i)); };
+	std::string msg = "square(sin(i))";
+	int         lsb = -18;
+	analyze(msg, fun, I(0.1, M_PI), lsb, false);
+
+
 # Détermination de la précision nécessaire
 
 ## Troncature

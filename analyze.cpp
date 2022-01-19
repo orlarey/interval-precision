@@ -1,18 +1,18 @@
 #include <iostream>
 #include <map>
 
-#include "fptester.h"
+#include "analyze.h"
 #include "truncate.h"
 
 /**
- * @brief fptester : fixpoint tester
+ * @brief analyze : fixpoint tester
  *
  * @param fun
  * @param i
  * @param l
  * @param hist
  */
-void fptester(const std::string& msg, const std::function<I(I)>& fun, I i, int l, bool hist)
+void analyze(const std::string& msg, const std::function<I(I)>& fun, I i, int l, bool hist)
 {
     I      j     = truncInterval(i, l);
     double delta = pow(2, l);
