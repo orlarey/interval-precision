@@ -1,4 +1,4 @@
-![example workflow](https://github.com/orlarey/interval-precision/actions/workflows/main.yml/badge.svg)
+Build status: [![example workflow](https://github.com/orlarey/interval-precision/actions/workflows/c-cpp.yml/badge.svg)](https://github.com/orlarey/interval-precision/actions/workflows/c-cpp.yml)
 
 # Détermination de la précision nécessaire
 
