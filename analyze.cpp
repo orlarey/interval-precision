@@ -18,8 +18,8 @@ void analyze(const std::string& msg, const std::function<I(I)>& fun, I i, int l,
     double delta = pow(2, l);
     I      k     = fun(j);
 
-    std::cout << "\nTEST: lambda(i).(" << msg << "); interval: " << i << "; lsb: " << l << "; truncated interval: " << j
-              << "; msb: " << msb(j) << "; resulting interval: " << k << "; msb: " << msb(k) << std::endl;
+    std::cout << "\nTEST: lambda(i).(" << msg << "); interval: " << i << "; LSB: " << l << "; truncated interval: " << j
+              << "; MSB: " << msb(j) << "; resulting interval: " << k << "; MSB: " << msb(k) << std::endl;
 
     std::map<int, int> R;
 
@@ -32,7 +32,7 @@ void analyze(const std::string& msg, const std::function<I(I)>& fun, I i, int l,
         R[lr]++;
     }
 
-    if (hist) std::cout << "Histogram " << i << ", " << j << ", lsb " << l << std::endl;
+    if (hist) std::cout << "LSB \tNUM \tRATIO " << std::endl;
     int sum  = 0;
     int g999 = 0;
     int g99  = 0;
@@ -48,9 +48,9 @@ void analyze(const std::string& msg, const std::function<I(I)>& fun, I i, int l,
         if (w >= 0.99) {
             g99 = r.first;
         }
-        if (hist) std::cout << r.first << ':' << r.second << " RATIO= " << w << std::endl;
+        if (hist) std::cout << r.first << '\t' << r.second << '\t' << w << std::endl;
         sum += r.second;
     }
-    std::cout << "Number of cases: " << cases << ", best precision: " << best << ", very good 0.999 precision: " << g999
-              << ", good 0.99 precision: " << g99 << std::endl;
+    std::cout << "Cases: " << cases << "; MSB: " << msb(k) << "; best precision LSB: " << best
+              << "; very good precision LSB (0.999): " << g999 << "; good precision LSB (0.99): " << g99 << std::endl;
 }

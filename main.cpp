@@ -124,7 +124,7 @@ int main()
     {
         auto        fun = [](I i) { return log(i); };
         std::string msg = "log(i)";
-        I           i(0.001, 1000);
+        I           i(0.001, 100);
         analyze(msg, fun, i, lsb, false);
     }
 
@@ -143,8 +143,8 @@ int main()
     }
 
     {
-        auto        fun = [](I i) { return i / 8.0; };
-        std::string msg = "i/8.0";
+        auto        fun = [](I i) { return i; };
+        std::string msg = "i";
         I           i(-1, 1);
         analyze(msg, fun, i, lsb, false);
     }
@@ -157,10 +157,32 @@ int main()
     }
 
     {
+        auto        fun = [](I i) { return i / 8.0; };
+        std::string msg = "i/8.0";
+        I           i(-1, 1);
+        analyze(msg, fun, i, lsb, false);
+    }
+
+    {
         auto        fun = [](I i) { return sin(i); };
         std::string msg = "sin(i)";
         I           i(1, 2);
         analyze(msg, fun, i, lsb, false);
+    }
+
+    {
+        auto        fun = [](I i) { return sin(i); };
+        std::string msg = "sin(i)";
+        I           i(-1, -1);
+        analyze(msg, fun, i, lsb, false);
+    }
+
+    {
+        auto        fun = [](I i) { return sin(i); };
+        std::string msg = "sin(i)";
+        int         lsb = -18;
+        I           i(0, M_PI * 2.0);
+        analyze(msg, fun, i, lsb, true);
     }
 
     return 0;
