@@ -1,4 +1,4 @@
-![example workflow](https://github.com/github/docs/actions/workflows/main.yml/badge.svg)
+![example workflow](https://github.com/orlarey/interval-precision/actions/workflows/main.yml/badge.svg)
 
 # Détermination de la précision nécessaire
 
