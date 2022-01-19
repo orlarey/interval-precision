@@ -45,18 +45,6 @@ int main()
     }
     //
     {
-        auto        fun = [](I i) { return sin(i); };
-        std::string msg = "sin(i)";
-        I           i(0, 2.0 * M_PI);
-        fptester(msg, fun, i, lsb, false);
-    }
-    {
-        auto        fun = [](I i) { return cos(i); };
-        std::string msg = "cos(i)";
-        I           i(0, 2.0 * M_PI);
-        fptester(msg, fun, i, lsb, false);
-    }
-    {
         auto        fun = [](I i) { return cos(i - M_PI_2); };
         std::string msg = "cos(i-PI/2)";
         I           i(0, 2.0 * M_PI);
@@ -68,5 +56,134 @@ int main()
         I           i(0, 2.0 * M_PI);
         fptester(msg, fun, i, lsb, false);
     }
+    {
+        auto        fun = [](I i) { return tan(i); };
+        std::string msg = "tan(i)";
+        I           i(-1, 1);
+        fptester(msg, fun, i, lsb, false);
+    }
+    {
+        auto        fun = [](I i) { return acos(i); };
+        std::string msg = "acos(i)";
+        I           i(-1, 1);
+        fptester(msg, fun, i, lsb, false);
+    }
+    {
+        auto        fun = [](I i) { return asin(i); };
+        std::string msg = "asin(i)";
+        I           i(-1, 1);
+        fptester(msg, fun, i, lsb, false);
+    }
+    {
+        auto        fun = [](I i) { return atan(i); };
+        std::string msg = "atan(i)";
+        I           i(-1, 1);
+        fptester(msg, fun, i, lsb, false);
+    }
+    {
+        auto        fun = [](I i) { return atan(i); };
+        std::string msg = "atan(i)";
+        I           i(-10, 10);
+        fptester(msg, fun, i, lsb, false);
+    }
+    {
+        auto        fun = [](I i) { return sin(i); };
+        std::string msg = "sin(i)";
+        I           i(0, 2.0 * M_PI);
+        fptester(msg, fun, i, lsb, false);
+    }
+    {
+        auto        fun = [](I i) { return cos(i); };
+        std::string msg = "cos(i)";
+        I           i(0, 2.0 * M_PI);
+        fptester(msg, fun, i, lsb, false);
+    }
+
+    {
+        auto        fun = [](I i) { return tan(i); };
+        std::string msg = "tan(i)";
+        I           i(-1, 1);
+        fptester(msg, fun, i, lsb, false);
+    }
+
+    {
+        auto        fun = [](I i) { return tan(i); };
+        std::string msg = "tan(i)";
+        I           i(-1.5, 1.5);
+        fptester(msg, fun, i, lsb, false);
+    }
+
+    {
+        auto        fun = [](I i) { return exp(i); };
+        std::string msg = "exp(i)";
+        I           i(-1, 1);
+        fptester(msg, fun, i, lsb, false);
+    }
+
+    {
+        auto        fun = [](I i) { return log(i); };
+        std::string msg = "log(i)";
+        I           i(0.001, 1000);
+        fptester(msg, fun, i, lsb, false);
+    }
+
+    {
+        auto        fun = [](I i) { return sqrt(i); };
+        std::string msg = "sqrt(i)";
+        I           i(0.001, 8);
+        fptester(msg, fun, i, lsb, false);
+    }
+
+    {
+        auto        fun = [](I i) { return abs(i); };
+        std::string msg = "abs(i)";
+        I           i(-1, 1);
+        fptester(msg, fun, i, lsb, false);
+    }
+
+    {
+        auto        fun = [](I i) { return i / 8.0; };
+        std::string msg = "i/8.0";
+        I           i(-1, 1);
+        fptester(msg, fun, i, lsb, false);
+    }
+
+    {
+        auto        fun = [](I i) { return i * 8.0; };
+        std::string msg = "i*8.0";
+        I           i(-1, 1);
+        fptester(msg, fun, i, lsb, false);
+    }
+
+    {
+        auto        fun = [](I i) { return sin(i); };
+        std::string msg = "sin(i)";
+        I           i(1, 2);
+        fptester(msg, fun, i, lsb, false);
+    }
+
     return 0;
 }
+
+/*
+acos Primitive
+asin Primitive
+atan Primitive
+atan2 Primitive
+cos Primitive
+sin Primitive
+tan Primitive
+exp Primitive
+log Primitive
+log10 Primitive
+pow Primitive
+sqrt Primitive
+abs Primitive
+min Primitive
+max Primitive
+fmod Primitive
+remainder Primitive
+floor Primitive
+ceil Primitive
+rint Primitive
+*/

@@ -16,9 +16,10 @@ void fptester(const std::string& msg, const std::function<I(I)>& fun, I i, int l
 {
     I      j     = truncInterval(i, l);
     double delta = pow(2, l);
+    I      k     = fun(j);
 
     std::cout << "\nTEST: lambda(i).(" << msg << "); interval: " << i << "; lsb: " << l << "; truncated interval: " << j
-              << "; resulting interval: " << fun(j) << std::endl;
+              << "; msb: " << msb(j) << "; resulting interval: " << k << "; msb: " << msb(k) << std::endl;
 
     std::map<int, int> R;
 
